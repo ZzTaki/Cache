@@ -26,7 +26,7 @@ public:
     DLinkedNode *head;
     DLinkedNode *tail;
     long long int capacity;
-    unordered_map<int, DLinkedNode *> cache; //id->{id, value, prev, next}
+    unordered_map<long long int, DLinkedNode *> cache; //id->{id, value, prev, next}
     long long int cache_size = 0;
     long long int total_num = 0, hit_num = 0;
     LRUCache(long long int capacity)
