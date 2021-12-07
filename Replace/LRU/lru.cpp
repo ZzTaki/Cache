@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
         {
             data.push_back(temp);
         }
-        cache.visit(stoll(data[0]), stoll(data[1]));
+        cache.visit(stoll(data[1]), stoll(data[0]));
     }
     cout << "-------LRU替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
