@@ -148,5 +148,5 @@ int main()
     cout << "-------LFU替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
     cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
-    cout << "-------LRU替换算法-------" << endl;
+    cout << "-------LFU替换算法-------" << endl;
 }
