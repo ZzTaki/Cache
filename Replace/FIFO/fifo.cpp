@@ -91,7 +91,15 @@ int main()
         {
             data.push_back(temp);
         }
-        cache.visit(stoll(data[1]), stoll(data[0]));
+        //检查是否有某个块比缓存容量还大
+        long long int key = stoll(data[1]), value = stoll(data[0]);
+        if (value > capa)
+        {
+            printf("缓存块 %lld 的大小为 %lld , 大于缓存容量 %lld\n", key, value, capa);
+            exit(1);
+        }
+
+        cache.visit(key, value);
     }
     cout << "-------FIFO替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
