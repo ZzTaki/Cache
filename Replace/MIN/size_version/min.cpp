@@ -147,7 +147,7 @@ int main()
         {
             id_indexes[key].push(stoll(data[i]));
         }
-        id_indexes[key].push(INT_MAX); //最后加一个无穷大
+        id_indexes[key].push(LLONG_MAX); //最后加一个无穷大
     }
 
     fstream fin_test(test);
