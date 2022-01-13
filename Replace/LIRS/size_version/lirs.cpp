@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <set>
 #include <list>
+#include <assert.h>
 using namespace std;
 
 struct DLinkedNode
@@ -54,16 +55,17 @@ public:
         if (key_state.count(key) && key_state[key] == 0) //访问热数据
         {
             hit_num++;
-            //热数据只需移到栈顶即可，并进行热链循环剪枝
+            //热数据只需移到栈底即可，并对栈顶进行热链循环剪枝
             DLinkedNode *moved = s[key];
             moveToHead(moved, 0);
+            cut();
         }
         else if (key_state.count(key) && key_state[key] == 1) //常驻冷数据
         {
             hit_num++;
             if (s.count(key)) //常驻冷数据在 s 中有索引
             {
-                //常驻冷数据置热、移至s队尾、更新s缓存大小、热链循环剪枝
+                //常驻冷数据置热、移至s栈底、更新s缓存大小
                 key_state[key] = 0;
                 DLinkedNode *moved = s[key];
                 moveToHead(moved, 0);
@@ -83,16 +85,16 @@ public:
                 addToHead(node, 0);
                 s[key] = node;
 
-                //将常驻冷数据移动到队列 q 的队尾
+                //将常驻冷数据移动到 q 的栈底
                 DLinkedNode *moved = q[key];
                 moveToHead(moved, 1);
             }
         }
         else //不在缓存中
         {
-            if (s.count(key)) //但在 s 中有索引，直接提升为热数据
+            if (key_state.count(key) && key_state[key] == 2) //但在 s 中有索引，直接提升为热数据
             {
-                //将在 s 中有索引的非常驻冷数据块置热、移动到 s 的队尾
+                //将在 s 中有索引的非常驻冷数据块置热、移动到 s 的栈底
                 key_state[key] = 0;
                 DLinkedNode *moved = s[key];
                 moveToHead(moved, 0);
@@ -100,27 +102,39 @@ public:
             }
             else
             {
-                key_state[key] = 1;
-                DLinkedNode *node_s = new DLinkedNode(key, value);
-                DLinkedNode *node_q = new DLinkedNode(key, value);
-                addToHead(node_s, 0);
-                addToHead(node_q, 1);
-                s[key] = node_s;
-                q[key] = node_q;
-                size_q += value;
+                if (size_q == 0 && size_s + value <= capa_s)
+                {
+                    key_state[key] = 0;
+                    DLinkedNode *node_s = new DLinkedNode(key, value);
+                    addToHead(node_s, 0);
+                    s[key] = node_s;
+                    size_s += value;
+                }
+                else
+                {
+                    key_state[key] = 1;
+                    DLinkedNode *node_s = new DLinkedNode(key, value);
+                    DLinkedNode *node_q = new DLinkedNode(key, value);
+                    addToHead(node_s, 0);
+                    addToHead(node_q, 1);
+                    s[key] = node_s;
+                    q[key] = node_q;
+                    size_q += value;
+                }
             }
         }
         while (size_s > capa_s)
         {
-            //从s中删除队首元素
+            //从s中删除栈顶元素
             DLinkedNode *moved = removeTail(0);
             size_s -= moved->value;
             s.erase(moved->key);
+            assert(key_state[moved->key] == 0);
 
-            //将该元素加入q的队尾
+            //将该元素加入q的栈底
             addToHead(moved, 1);
             size_q += moved->value;
-            q[key] = moved;
+            q[moved->key] = moved;
             key_state[moved->key] = 1;
 
             //热链循环剪枝
@@ -136,22 +150,25 @@ public:
             {
                 key_state.erase(removed->key);
             }
+            else
+            {
+                key_state[removed->key] = 2; //变成非常驻冷数据
+            }
             delete removed;
         }
-        cut();
     }
 
     void cut() //热循环剪枝
     {
-        DLinkedNode *cur = head[0]->next;
-        while (cur != tail[0] && key_state[cur->key] != 0)
+        DLinkedNode *cur = tail[0]->prev;
+        while (cur != head[0] && key_state[cur->key] != 0)
         {
-            cur = cur->next;
+            cur = cur->prev;
         }
-        DLinkedNode *removed = head[0]->next;
+        DLinkedNode *removed = tail[0]->prev;
         while (removed != cur)
         {
-            DLinkedNode *temp = removed->next;
+            DLinkedNode *tmp = removed->prev;
             s.erase(removed->key);
             removeNode(removed);
             if (key_state[removed->key] == 2) //非常驻冷数据
@@ -159,7 +176,7 @@ public:
                 key_state.erase(removed->key);
             }
             delete removed;
-            removed = temp;
+            removed = tmp;
         }
     }
 
@@ -188,6 +205,22 @@ public:
         DLinkedNode *node = tail[idx]->prev;
         removeNode(node);
         return node;
+    }
+
+    ~LIRSCache()
+    {
+        for (const pair<long long int, DLinkedNode *> &p : s)
+        {
+            delete p.second;
+        }
+        for (const pair<long long int, DLinkedNode *> &p : q)
+        {
+            delete p.second;
+        }
+        delete head[0];
+        delete head[1];
+        delete tail[0];
+        delete tail[1];
     }
 };
 
@@ -227,7 +260,7 @@ int main()
         cache.visit(key, value);
     }
     cout << "-------LIRS替换算法-------" << endl;
-    cout << "缓存容量 (Bytes) ：" << capa << endl;
+    cout << "缓存容量 (Bytes) :" << capa << endl;
     cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
     cout << "-------LIRS替换算法-------" << endl;
 }
