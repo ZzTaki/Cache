@@ -2,7 +2,7 @@ import collections
 
 
 class LIRSCache(object):
-    def __init__(self, capacity, rate=1/6):
+    def __init__(self, capacity, rate=1 / 6):
         self.lhirs = int(capacity * rate)
         self.llirs = capacity - self.lhirs
         self.size_lirs = 0
@@ -10,7 +10,7 @@ class LIRSCache(object):
         # 若map中不存在某个键值，可以视为该id对应的值为2
         # {id: x} (x = 0, 1, 2) 0代表LIR，1代表resident HIR, 2代表 non-resident HIR
         self.map = {}
-        # 负责热数据（LIR）的淘汰，在s中不代表就在cache中
+        # 负责热数据（LIR）的淘汰，在s中不代表就在cache中。保存 |s| 个最近IRR值最小的块，同时track有机会加入s的若干HIR块
         self.s = collections.OrderedDict(dict())
         # 负责冷数据（HIR）的淘汰 {id: True}，在q中就一定在cache中
         self.q = collections.OrderedDict(dict())
@@ -79,9 +79,9 @@ class LIRSCache(object):
             del self.s[s_list[j]]
 
 
-print("Enter LIRSCache Capacity (Blocks) : ", end='')
+print("Enter LIRSCache Capacity (Blocks) : ", end="")
 capa = int(input())
-print("Enter <Your Test File>: ", end='')
+print("Enter <Your Test File>: ", end="")
 file = input()
 cache = LIRSCache(capa)
 with open(file, "r", encoding="utf-8") as f:
