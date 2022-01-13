@@ -29,8 +29,7 @@ class ARCCache(object):
             if self.size_b1 >= self.size_b2:
                 self.p = min(self.p + 1, self.capacity)
             else:
-                self.p = min(self.p + self.size_b2 //
-                             self.size_b1, self.capacity)
+                self.p = min(self.p + self.size_b2 // self.size_b1, self.capacity)
             self.my_replace(id)
             del self.b1[id]
             self.size_b1 -= 1
@@ -41,7 +40,7 @@ class ARCCache(object):
             if self.size_b2 >= self.size_b1:
                 self.p = max(self.p - 1, 0)
             else:
-                self.p = max(self.p - self.size_b1//self.size_b2, 0)
+                self.p = max(self.p - self.size_b1 // self.size_b2, 0)
             self.my_replace(id)
             del self.b2[id]
             self.size_b2 -= 1
@@ -59,8 +58,14 @@ class ARCCache(object):
                     self.size_t1 -= 1
                     del self.map[key]
             elif self.size_t1 + self.size_b1 < self.capacity:
-                if self.size_t1 + self.size_t2 + self.size_b1 + self.size_b2 >= self.capacity:
-                    if self.size_t1 + self.size_t2 + self.size_b1 + self.size_b2 == 2*self.capacity:
+                if (
+                    self.size_t1 + self.size_t2 + self.size_b1 + self.size_b2
+                    >= self.capacity
+                ):
+                    if (
+                        self.size_t1 + self.size_t2 + self.size_b1 + self.size_b2
+                        == 2 * self.capacity
+                    ):
                         self.b2.popitem(last=False)
                         self.size_b2 -= 1
                     self.my_replace(id)
@@ -71,7 +76,9 @@ class ARCCache(object):
     def my_replace(self, id):  # 删除t1或t2 LRU端多余的缓存（只在缓存空间满了，且有新数据加入缓存系统前才会调用）
         # 若想删除t1的LRU端，则需保证：（1）t1里面有元素；（2）t1里面的数量大于期望的大小p；或者t1里的数量达到p并且新访问数据在b2里)
         # (这意味着 |t1|<p 时，更希望将t1多填一点，因此智慧删除t2的LRU，如果 |t1|=p，则得看新访问的是否在b2里，如果在b2里，说明t2可能小了，也就只能删t1的LRU了)
-        if self.size_t1 > 0 and (self.size_t1 > self.p or (id in self.b2 and self.size_t1 == self.p)):
+        if self.size_t1 > 0 and (
+            self.size_t1 > self.p or (id in self.b2 and self.size_t1 == self.p)
+        ):
             key, value = self.t1.popitem(last=False)
             self.size_t1 -= 1
             del self.map[key]
@@ -85,9 +92,9 @@ class ARCCache(object):
             self.size_b2 += 1  # 将t2的LRU移至b2
 
 
-print("Enter S4LRUCache Capacity (Blocks) : ", end='')
+print("Enter ARCCache Capacity (Blocks) : ", end="")
 capa = int(input())
-print("Enter <Your Test File>: ", end='')
+print("Enter <Your Test File>: ", end="")
 file = input()
 cache = ARCCache(capa)
 with open(file, "r", encoding="utf-8") as f:
