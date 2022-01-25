@@ -72,11 +72,6 @@ public:
     //供外部调用
     void visit(long long int key, long long int value)
     {
-        if (total_num == 11334)
-        {
-            int x = 1;
-            x = 2;
-        }
         total_num++;
         for (int i = 2; i >= 0; i--)
         {
@@ -105,6 +100,8 @@ public:
                 }
                 else //能够发生淘汰就代表预热结束了
                 {
+                    if (value > capacity[i])
+                        return;
                     flag = true;
                     evict(key, value, i); //evict
                     set(key, value, i);   //insertion
@@ -186,11 +183,6 @@ int main(int argc, char *argv[])
         }
         //检查是否有某个块比缓存容量还大
         long long int key = stoll(data[1]), value = stoll(data[0]);
-        if (value > capa)
-        {
-            printf("缓存块 %lld 的大小为 %lld , 大于缓存容量 %lld\n", key, value, capa);
-            exit(1);
-        }
 
         cache.visit(key, value);
     }

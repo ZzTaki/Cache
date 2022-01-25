@@ -33,7 +33,7 @@ public:
     long long int size_s, size_q;
     long long int total_num, hit_num;
 
-    LIRSCache(long long int capacity, double rate = 1.0 / 6)
+    LIRSCache(long long int capacity, double rate = 9.0 / 10)
     {
         head[0] = new DLinkedNode(), head[1] = new DLinkedNode();
         tail[0] = new DLinkedNode(), tail[1] = new DLinkedNode();
@@ -46,7 +46,6 @@ public:
         capa_q = capacity - capa_s;
         size_s = size_q = 0;
         total_num = hit_num = 0;
-        cout << capa_s << " " << capa_q << endl;
     }
 
     void visit(long long int key, long long int value)
@@ -55,7 +54,7 @@ public:
         if (key_state.count(key) && key_state[key] == 0) //访问热数据
         {
             hit_num++;
-            //热数据只需移到栈底即可，并对栈顶进行热链循环剪枝
+            //热数据只需移到s的MRU即可，并对s的LRU端进行热链循环剪枝
             DLinkedNode *moved = s[key];
             moveToHead(moved, 0);
             cut();
@@ -65,7 +64,7 @@ public:
             hit_num++;
             if (s.count(key)) //常驻冷数据在 s 中有索引
             {
-                //常驻冷数据置热、移至s栈底、更新s缓存大小
+                //常驻冷数据置热、移至s的MRU、更新s缓存大小
                 key_state[key] = 0;
                 DLinkedNode *moved = s[key];
                 moveToHead(moved, 0);
@@ -85,16 +84,16 @@ public:
                 addToHead(node, 0);
                 s[key] = node;
 
-                //将常驻冷数据移动到 q 的栈底
+                //将常驻冷数据移动到 q 的MRU
                 DLinkedNode *moved = q[key];
                 moveToHead(moved, 1);
             }
         }
         else //不在缓存中
         {
-            if (key_state.count(key) && key_state[key] == 2) //但在 s 中有索引，直接提升为热数据
+            if (key_state.count(key) && key_state[key] == 2) //但在 s 中有索引，直接提升为热数据 (s.count(key)条件可以不加)
             {
-                //将在 s 中有索引的非常驻冷数据块置热、移动到 s 的栈底
+                //将在 s 中有索引的非常驻冷数据块置热、移动到 s 的MRU
                 key_state[key] = 0;
                 DLinkedNode *moved = s[key];
                 moveToHead(moved, 0);
@@ -112,6 +111,8 @@ public:
                 }
                 else
                 {
+                    if (value > capa_q)
+                        return;
                     key_state[key] = 1;
                     DLinkedNode *node_s = new DLinkedNode(key, value);
                     DLinkedNode *node_q = new DLinkedNode(key, value);
@@ -125,7 +126,7 @@ public:
         }
         while (size_s > capa_s)
         {
-            //从s中删除栈顶元素
+            //从s中删除LRU元素
             DLinkedNode *moved = removeTail(0);
             size_s -= moved->value;
             s.erase(moved->key);
@@ -251,11 +252,6 @@ int main()
         }
         //检查是否有某个块比缓存容量还大
         long long int key = stoll(data[1]), value = stoll(data[0]);
-        if (value > capa)
-        {
-            printf("缓存块 %lld 的大小为 %lld , 大于缓存容量 %lld\n", key, value, capa);
-            exit(1);
-        }
 
         cache.visit(key, value);
     }

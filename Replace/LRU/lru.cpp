@@ -75,6 +75,8 @@ public:
             }
             else
             {
+                if (value > capacity)
+                    return;
                 evict(key, value); //evict
                 set(key, value);   //insertion
             }
@@ -141,11 +143,6 @@ int main(int argc, char *argv[])
         }
         //检查是否有某个块比缓存容量还大
         long long int key = stoll(data[1]), value = stoll(data[0]);
-        if (value > capa)
-        {
-            printf("缓存块 %lld 的大小为 %lld , 大于缓存容量 %lld\n", key, value, capa);
-            exit(1);
-        }
 
         cache.visit(key, value);
     }

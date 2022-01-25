@@ -93,7 +93,7 @@ public:
                 moveToHead(moved, 1);
                 if (moved->flag)
                 {
-                    t_l = max(capacity, t_l + max(moved->value, size_hn / size_hd));
+                    t_l = min(capacity, t_l + max(moved->value, size_hn / size_hd));
                     t_hr = capacity - t_l;
                     size_hd -= moved->value;
                     moved->flag = false;
@@ -108,14 +108,14 @@ public:
                 key_state[key] = 0;
                 DLinkedNode *moved = s[key];
                 moveToHead(moved, 0);
-                t_hr = max(capacity, t_hr + max(moved->value, size_hd / size_hn));
+                t_hr = min(capacity, t_hr + max(moved->value, size_hd / size_hn));
                 t_l = capacity - size_hr;
                 size_hn -= moved->value, size_l += moved->value;
                 bringCurrentBackToTarget();
             }
             else
             {
-                if (size_hr == 0 && size_l + value <= t_l)
+                if (size_hr == 0 && size_l + value <= t_l) //初始状态，先填热链
                 {
                     key_state[key] = 0;
                     DLinkedNode *node_s = new DLinkedNode(key, value, false);
@@ -123,8 +123,10 @@ public:
                     s[key] = node_s;
                     size_l += value;
                 }
-                else
+                else //填冷链
                 {
+                    if (value > capacity)
+                        return;
                     key_state[key] = 1;
                     DLinkedNode *node_s = new DLinkedNode(key, value, false);
                     DLinkedNode *node_q = new DLinkedNode(key, value, false);
@@ -207,7 +209,7 @@ public:
             s.erase(moved->key);
             moved->flag = true;
 
-            //将该元素加入q的栈底
+            //将该元素加入q的MRU
             addToHead(moved, 1);
             q[moved->key] = moved;
             key_state[moved->key] = 1;
@@ -305,11 +307,6 @@ int main()
         }
         //检查是否有某个块比缓存容量还大
         long long int key = stoll(data[1]), value = stoll(data[0]);
-        if (value > capa)
-        {
-            printf("缓存块 %lld 的大小为 %lld , 大于缓存容量 %lld\n", key, value, capa);
-            exit(1);
-        }
 
         cache.visit(key, value);
     }

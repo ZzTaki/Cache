@@ -41,9 +41,10 @@ public:
         }
         else
         {
+            if (value > capacity)
+                return;
             while (cache_size + value > capacity)
             {
-                cout << total_num << endl;
                 long long int evicted = searchMaxReuseId();
                 cache_size -= cache[evicted];
                 cache.erase(evicted);
@@ -51,7 +52,6 @@ public:
             cache[key] = value;
             cache_size += value;
         }
-        cout << total_num << endl;
     }
 
     long long int searchMaxReuseId()
@@ -165,11 +165,6 @@ int main()
 
         //检查是否有某个块比缓存容量还大
         long long int key = stoll(data[1]), value = stoll(data[0]);
-        if (value > capa)
-        {
-            printf("缓存块 %lld 的大小为 %lld , 大于缓存容量 %lld\n", key, value, capa);
-            exit(1);
-        }
 
         cache.visit(key, value);
     }
