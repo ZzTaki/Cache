@@ -22,7 +22,7 @@ struct DLinkedNode
     DLinkedNode() : key(0), value(0), prev(nullptr), next(nullptr) {}
     DLinkedNode(long long int _key, long long int _value) : key(_key), value(_value), prev(nullptr), next(nullptr) {}
 };
-class LIRSCache
+class LIRSCache //LIRS使用 max(Tlast-reuseDistance, Tlast) 作为衡量标准，该指标越小，代表数据越热。所有又有IRR，又有recency。
 {
 public:
     DLinkedNode *head[2], *tail[2]; //0控制s，1控制q
