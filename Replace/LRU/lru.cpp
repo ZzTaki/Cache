@@ -36,28 +36,15 @@ public:
         tail = new DLinkedNode();
         head->next = tail, tail->prev = head;
     }
-    //get只判断 lru 缓存中是否有对象，不做 promotion 操作
-    bool get(long long int key) const
+
+    ~LRUCache()
     {
-        return cache.count(key);
+        for (pair<int, DLinkedNode *> block : cache)
+            delete block.second;
+        delete head;
+        delete tail;
     }
-    void set(long long int key, long long int value)
-    {
-        DLinkedNode *node = new DLinkedNode(key, value);
-        cache[key] = node;
-        addToHead(node);
-        cache_size += value;
-    }
-    void evict(long long int key, long long int value)
-    {
-        while (cache_size + value > capacity)
-        {
-            DLinkedNode *removed = removeTail();
-            cache_size -= removed->value;
-            cache.erase(removed->key);
-            delete removed;
-        }
-    }
+
     //供外部调用
     void visit(long long int key, long long int value)
     {
@@ -82,6 +69,31 @@ public:
             }
         }
     }
+
+private:
+    //get只判断 lru 缓存中是否有对象，不做 promotion 操作
+    bool get(long long int key) const
+    {
+        return cache.count(key);
+    }
+    void set(long long int key, long long int value)
+    {
+        DLinkedNode *node = new DLinkedNode(key, value);
+        cache[key] = node;
+        addToHead(node);
+        cache_size += value;
+    }
+    void evict(long long int key, long long int value)
+    {
+        while (cache_size + value > capacity)
+        {
+            DLinkedNode *removed = removeTail();
+            cache_size -= removed->value;
+            cache.erase(removed->key);
+            delete removed;
+        }
+    }
+
     void addToHead(DLinkedNode *node)
     {
         node->prev = head;
@@ -107,13 +119,6 @@ public:
         DLinkedNode *node = tail->prev;
         removeNode(node);
         return node;
-    }
-    ~LRUCache()
-    {
-        for (pair<int, DLinkedNode *> block : cache)
-            delete block.second;
-        delete head;
-        delete tail;
     }
 };
 int main(int argc, char *argv[])

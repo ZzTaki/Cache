@@ -50,6 +50,22 @@ public:
         size_l = size_hr = size_hn = size_hd = 0;
     }
 
+    ~DLIRSCache()
+    {
+        for (const pair<long long int, DLinkedNode *> &p : s)
+        {
+            delete p.second;
+        }
+        for (const pair<long long int, DLinkedNode *> &p : q)
+        {
+            delete p.second;
+        }
+        delete head[0];
+        delete head[1];
+        delete tail[0];
+        delete tail[1];
+    }
+
     void visit(long long int key, long long int value)
     {
         total_num++;
@@ -173,6 +189,7 @@ public:
         }
     }
 
+private:
     void addToHead(DLinkedNode *node, int idx)
     {
         node->prev = head[idx];
@@ -261,22 +278,6 @@ public:
             delete removed;
             removed = tmp;
         }
-    }
-
-    ~DLIRSCache()
-    {
-        for (const pair<long long int, DLinkedNode *> &p : s)
-        {
-            delete p.second;
-        }
-        for (const pair<long long int, DLinkedNode *> &p : q)
-        {
-            delete p.second;
-        }
-        delete head[0];
-        delete head[1];
-        delete tail[0];
-        delete tail[1];
     }
 };
 

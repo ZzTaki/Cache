@@ -33,6 +33,7 @@ public:
     long long int cache_size[3];
     long long int total_num = 0, hit_num = 0;
     bool flag = false; //标记是否预热结束
+
     DIPCache(long long int capacity)
     {
         for (int i = 0; i < 3; i++)
@@ -44,31 +45,18 @@ public:
             cache_size[i] = 0;
         }
     }
-    //get只判断缓存中是否有对象，不做 promotion 操作
-    bool get(long long int key, int idx) const
+
+    ~DIPCache()
     {
-        return cache[idx].count(key);
-    }
-    void set(long long int key, long long int value, int idx)
-    {
-        DLinkedNode *node = new DLinkedNode(key, value);
-        cache[idx][key] = node;
-        if (flag && (idx == 2 || (idx == 0 && psel > INT16_MAX))) //只有在预热结束 且 idx指示的是BIP缓存或者指示采用BIP策略的真实缓存 时才会插入tail位置
-            addToTail(node, idx);
-        else
-            addToHead(node, idx);
-        cache_size[idx] += value;
-    }
-    void evict(long long int key, long long int value, int idx)
-    {
-        while (cache_size[idx] + value > capacity[idx])
+        for (int i = 0; i < 3; i++)
         {
-            DLinkedNode *removed = removeTail(idx);
-            cache_size[idx] -= removed->value;
-            cache[idx].erase(removed->key);
-            delete removed;
+            for (pair<int, DLinkedNode *> block : cache[i])
+                delete block.second;
+            delete head[i];
+            delete tail[i];
         }
     }
+
     //供外部调用
     void visit(long long int key, long long int value)
     {
@@ -109,6 +97,33 @@ public:
             }
         }
     }
+
+private:
+    //get只判断缓存中是否有对象，不做 promotion 操作
+    bool get(long long int key, int idx) const
+    {
+        return cache[idx].count(key);
+    }
+    void set(long long int key, long long int value, int idx)
+    {
+        DLinkedNode *node = new DLinkedNode(key, value);
+        cache[idx][key] = node;
+        if (flag && (idx == 2 || (idx == 0 && psel > INT16_MAX))) //只有在预热结束 且 idx指示的是BIP缓存或者指示采用BIP策略的真实缓存 时才会插入tail位置
+            addToTail(node, idx);
+        else
+            addToHead(node, idx);
+        cache_size[idx] += value;
+    }
+    void evict(long long int key, long long int value, int idx)
+    {
+        while (cache_size[idx] + value > capacity[idx])
+        {
+            DLinkedNode *removed = removeTail(idx);
+            cache_size[idx] -= removed->value;
+            cache[idx].erase(removed->key);
+            delete removed;
+        }
+    }
     void addToHead(DLinkedNode *node, int idx)
     {
         node->prev = head[idx];
@@ -142,17 +157,6 @@ public:
         DLinkedNode *node = tail[idx]->prev;
         removeNode(node);
         return node;
-    }
-
-    ~DIPCache()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            for (pair<int, DLinkedNode *> block : cache[i])
-                delete block.second;
-            delete head[i];
-            delete tail[i];
-        }
     }
 };
 

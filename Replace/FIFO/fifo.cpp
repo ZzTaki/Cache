@@ -23,26 +23,7 @@ public:
         cache_size = hit_num = total_num = 0;
         this->capacity = capacity;
     }
-    bool get(long long int key) const
-    {
-        return cache.count(key);
-    }
-    void set(long long int key, long long int value)
-    {
-        ordered.push(key);
-        cache[key] = value;
-        cache_size += value;
-    }
-    void evict(long long int key, long long int value)
-    {
-        while (cache_size + value > capacity)
-        {
-            long long int evict_key = ordered.front();
-            ordered.pop();
-            cache_size -= cache[evict_key];
-            cache.erase(evict_key);
-        }
-    }
+
     void visit(long long int key, long long int value)
     {
         total_num++;
@@ -64,6 +45,28 @@ public:
                 evict(key, value);
                 set(key, value);
             }
+        }
+    }
+
+private:
+    bool get(long long int key) const
+    {
+        return cache.count(key);
+    }
+    void set(long long int key, long long int value)
+    {
+        ordered.push(key);
+        cache[key] = value;
+        cache_size += value;
+    }
+    void evict(long long int key, long long int value)
+    {
+        while (cache_size + value > capacity)
+        {
+            long long int evict_key = ordered.front();
+            ordered.pop();
+            cache_size -= cache[evict_key];
+            cache.erase(evict_key);
         }
     }
 };

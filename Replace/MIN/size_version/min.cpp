@@ -54,6 +54,7 @@ public:
         }
     }
 
+private:
     long long int searchMaxReuseId()
     {
         long long int max_line = -1, evicted = -1;

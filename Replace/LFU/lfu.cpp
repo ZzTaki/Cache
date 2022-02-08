@@ -45,6 +45,24 @@ public:
         freq_set.clear();
     }
 
+    // 外部调用
+    void visit(long long int key, long long int value)
+    {
+        total_num++;
+        if (!get(key))
+        {
+            if (value > capacity)
+                return;
+            Set(key, value);
+        }
+        else
+        {
+            hit_num++;
+            promotion(key);
+        }
+    }
+
+private:
     bool get(long long int key) const
     {
         auto it = key_table.find(key);
@@ -100,23 +118,6 @@ public:
         freq_table[freq + 1].push_front(Node(key, val, freq + 1));
         freq_set.insert(freq + 1);
         key_table[key] = freq_table[freq + 1].begin();
-    }
-
-    // 外部调用
-    void visit(long long int key, long long int value)
-    {
-        total_num++;
-        if (!get(key))
-        {
-            if (value > capacity)
-                return;
-            Set(key, value);
-        }
-        else
-        {
-            hit_num++;
-            promotion(key);
-        }
     }
 };
 

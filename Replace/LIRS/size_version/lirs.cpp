@@ -48,6 +48,22 @@ public:
         total_num = hit_num = 0;
     }
 
+    ~LIRSCache()
+    {
+        for (const pair<long long int, DLinkedNode *> &p : s)
+        {
+            delete p.second;
+        }
+        for (const pair<long long int, DLinkedNode *> &p : q)
+        {
+            delete p.second;
+        }
+        delete head[0];
+        delete head[1];
+        delete tail[0];
+        delete tail[1];
+    }
+
     void visit(long long int key, long long int value)
     {
         total_num++;
@@ -159,6 +175,7 @@ public:
         }
     }
 
+private:
     void cut() //热循环剪枝
     {
         DLinkedNode *cur = tail[0]->prev;
@@ -206,22 +223,6 @@ public:
         DLinkedNode *node = tail[idx]->prev;
         removeNode(node);
         return node;
-    }
-
-    ~LIRSCache()
-    {
-        for (const pair<long long int, DLinkedNode *> &p : s)
-        {
-            delete p.second;
-        }
-        for (const pair<long long int, DLinkedNode *> &p : q)
-        {
-            delete p.second;
-        }
-        delete head[0];
-        delete head[1];
-        delete tail[0];
-        delete tail[1];
     }
 };
 
