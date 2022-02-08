@@ -37,7 +37,7 @@ public:
         head->next = tail, tail->prev = head;
     }
     //get只判断 lru 缓存中是否有对象，不做 promotion 操作
-    bool get(long long int key)
+    bool get(long long int key) const
     {
         return cache.count(key);
     }

@@ -45,7 +45,7 @@ public:
         }
     }
     //get只判断缓存中是否有对象，不做 promotion 操作
-    bool get(long long int key, int idx)
+    bool get(long long int key, int idx) const
     {
         return cache[idx].count(key);
     }

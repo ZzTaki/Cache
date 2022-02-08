@@ -23,7 +23,7 @@ public:
         cache_size = hit_num = total_num = 0;
         this->capacity = capacity;
     }
-    bool get(long long int key)
+    bool get(long long int key) const
     {
         return cache.count(key);
     }

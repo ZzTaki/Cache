@@ -45,7 +45,7 @@ public:
         freq_set.clear();
     }
 
-    bool get(long long int key)
+    bool get(long long int key) const
     {
         auto it = key_table.find(key);
         if (it == key_table.end())
