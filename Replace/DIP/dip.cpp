@@ -24,7 +24,7 @@ struct DLinkedNode
 //使用一个16位计数器来动态选择 LRU 和 BIP 策略
 class DIPCache
 {
-public:
+private:
     DLinkedNode *head[3];
     DLinkedNode *tail[3];
     long long int capacity[3];
@@ -34,6 +34,7 @@ public:
     long long int total_num = 0, hit_num = 0;
     bool flag = false; //标记是否预热结束
 
+public:
     DIPCache(long long int capacity)
     {
         for (int i = 0; i < 3; i++)
@@ -96,6 +97,16 @@ public:
                 }
             }
         }
+    }
+
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
     }
 
 private:
@@ -192,6 +203,6 @@ int main(int argc, char *argv[])
     }
     cout << "-------DIP替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------DIP替换算法-------" << endl;
 }

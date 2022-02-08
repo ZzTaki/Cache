@@ -22,13 +22,15 @@ struct DLinkedNode
 };
 class LRUCache
 {
-public:
+private:
     DLinkedNode *head;
     DLinkedNode *tail;
     long long int capacity;
     unordered_map<long long int, DLinkedNode *> cache; //id->{id, value, prev, next}
     long long int cache_size = 0;
     long long int total_num = 0, hit_num = 0;
+
+public:
     LRUCache(long long int capacity)
     {
         this->capacity = capacity;
@@ -68,6 +70,16 @@ public:
                 set(key, value);   //insertion
             }
         }
+    }
+
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
     }
 
 private:
@@ -153,6 +165,6 @@ int main(int argc, char *argv[])
     }
     cout << "-------LRU替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------LRU替换算法-------" << endl;
 }

@@ -17,11 +17,13 @@ using namespace std;
 
 class MINCache
 {
-public:
+private:
     long long int capacity, cache_size;
     long long int total_num, hit_num;
     unordered_map<long long int, long long int> cache;             //id->size
     unordered_map<long long int, queue<long long int>> id_indexes; //id: 出现在哪些行
+
+public:
     MINCache(long long int _capacity, unordered_map<long long int, queue<long long int>> &_id_indexes)
     {
         capacity = _capacity;
@@ -52,6 +54,16 @@ public:
             cache[key] = value;
             cache_size += value;
         }
+    }
+
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
     }
 
 private:
@@ -171,6 +183,6 @@ int main()
     }
     cout << "-------MIN替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------MIN替换算法-------" << endl;
 }

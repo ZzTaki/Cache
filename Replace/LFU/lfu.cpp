@@ -27,13 +27,14 @@ struct Node
 };
 class LFUCache
 {
-public:
+private:
     long long int capacity, hit_num, total_num;
     long long int cache_size, minfreq;
     unordered_map<long long int, list<Node>::iterator> key_table;
     unordered_map<long long int, list<Node>> freq_table;
     set<long long int> freq_set;
 
+public:
     LFUCache(long long int _capacity)
     {
         cache_size = 0;
@@ -60,6 +61,16 @@ public:
             hit_num++;
             promotion(key);
         }
+    }
+
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
     }
 
 private:
@@ -153,6 +164,6 @@ int main()
     }
     cout << "-------LFU替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------LFU替换算法-------" << endl;
 }

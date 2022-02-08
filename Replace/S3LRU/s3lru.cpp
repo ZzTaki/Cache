@@ -21,12 +21,14 @@ struct DLinkedNode
 };
 class S4LRUCache
 {
-public:
+private:
     DLinkedNode *head[3];
     DLinkedNode *tail[3];
     long long int capacity;
     unordered_map<long long int, DLinkedNode *> cache_stack[3]; //id->{key, value, prev, next}
     long long int cache_size[3], hit_num, total_num;
+
+public:
     S4LRUCache(long long int capacity)
     {
         this->capacity = capacity;
@@ -38,6 +40,49 @@ public:
         head[1]->next = tail[1], tail[1]->prev = head[1];
         head[2]->next = tail[2], tail[2]->prev = head[2];
     }
+
+    ~S4LRUCache()
+    {
+        for (int i = 0; i <= 2; i++)
+        {
+            for (pair<long long int, DLinkedNode *> block : cache_stack[i])
+                delete block.second;
+            delete head[i];
+            delete tail[i];
+        }
+    }
+
+    void visit(long long int key, long long int value)
+    {
+        total_num++;
+        if (get(key)) //get里面做了 premotion
+        {
+            hit_num++;
+        }
+        else
+        {
+            if (cache_size[0] + cache_size[1] + cache_size[2] + value <= capacity)
+                set(key, value);
+            else
+            {
+                if (value > capacity)
+                    return;
+                evict(key, value);
+                set(key, value);
+            }
+        }
+    }
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
+    }
+
+private:
     bool get(long long int key)
     {
         if (cache_stack[0].count(key))
@@ -85,26 +130,7 @@ public:
             delete removed;
         }
     }
-    void visit(long long int key, long long int value)
-    {
-        total_num++;
-        if (get(key)) //get里面做了 premotion
-        {
-            hit_num++;
-        }
-        else
-        {
-            if (cache_size[0] + cache_size[1] + cache_size[2] + value <= capacity)
-                set(key, value);
-            else
-            {
-                if (value > capacity)
-                    return;
-                evict(key, value);
-                set(key, value);
-            }
-        }
-    }
+
     // 命中后进行完 promotion 后，可能导致高级链容量超出，则将高级链的LRU端块移动到较低级链中，直到容量合适
     void balance()
     {
@@ -154,16 +180,6 @@ public:
         removeNode(node);
         return node;
     }
-    ~S4LRUCache()
-    {
-        for (int i = 0; i <= 2; i++)
-        {
-            for (pair<long long int, DLinkedNode *> block : cache_stack[i])
-                delete block.second;
-            delete head[i];
-            delete tail[i];
-        }
-    }
 };
 
 int main()
@@ -198,6 +214,6 @@ int main()
     }
     cout << "-------S3LRU替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------S3LRU替换算法-------" << endl;
 }

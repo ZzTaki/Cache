@@ -13,11 +13,13 @@ using namespace std;
 
 class FIFOCache
 {
-public:
+private:
     long long int capacity;
     unordered_map<long long int, long long int> cache; //id->size
     queue<long long int> ordered;                      //按加入缓存顺序将key排序
     long long int cache_size, hit_num, total_num;
+
+public:
     FIFOCache(long long int capacity)
     {
         cache_size = hit_num = total_num = 0;
@@ -46,6 +48,16 @@ public:
                 set(key, value);
             }
         }
+    }
+
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
     }
 
 private:
@@ -103,6 +115,6 @@ int main()
     }
     cout << "-------FIFO替换算法-------" << endl;
     cout << "缓存容量 (Bytes) ：" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------FIFO替换算法-------" << endl;
 }

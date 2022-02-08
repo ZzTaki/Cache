@@ -24,7 +24,7 @@ struct DLinkedNode
 };
 class LIRSCache //LIRS使用 max(Tlast-reuseDistance, Tlast) 作为衡量标准，该指标越小，代表数据越热。所有又有IRR，又有recency。
 {
-public:
+private:
     DLinkedNode *head[2], *tail[2]; //0控制s，1控制q
     unordered_map<long long int, DLinkedNode *> s;
     unordered_map<long long int, DLinkedNode *> q;
@@ -33,6 +33,7 @@ public:
     long long int size_s, size_q;
     long long int total_num, hit_num;
 
+public:
     LIRSCache(long long int capacity, double rate = 9.0 / 10)
     {
         head[0] = new DLinkedNode(), head[1] = new DLinkedNode();
@@ -175,6 +176,16 @@ public:
         }
     }
 
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
+    }
+
 private:
     void cut() //热循环剪枝
     {
@@ -258,6 +269,6 @@ int main()
     }
     cout << "-------LIRS替换算法-------" << endl;
     cout << "缓存容量 (Bytes) :" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------LIRS替换算法-------" << endl;
 }

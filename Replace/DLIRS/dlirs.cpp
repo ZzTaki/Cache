@@ -25,7 +25,7 @@ struct DLinkedNode
 };
 class DLIRSCache //DLIRS使用和缓存容量相等的 shadow cache
 {
-public:
+private:
     DLinkedNode *head[2], *tail[2]; //0控制s，1控制q
     unordered_map<long long int, DLinkedNode *> s;
     unordered_map<long long int, DLinkedNode *> q;
@@ -34,6 +34,8 @@ public:
 
     long long int t_l, t_hr, size_l, size_hr, size_hn, size_hd; //期望LIR容量、期望resdent hir容量、当前LIR容量、当前resident hir容量、当前non-resident hir所占shadow cache容量、当前从LIR状态降级为resident hir的文件所占容量
     long long int capacity;
+
+public:
     DLIRSCache(long long int capacity, double rate = 9.0 / 10)
     {
         this->capacity = capacity;
@@ -189,6 +191,16 @@ public:
         }
     }
 
+    long long int getTotal() const
+    {
+        return total_num;
+    }
+
+    long long int getHit() const
+    {
+        return hit_num;
+    }
+
 private:
     void addToHead(DLinkedNode *node, int idx)
     {
@@ -313,6 +325,6 @@ int main()
     }
     cout << "-------DLIRS替换算法-------" << endl;
     cout << "缓存容量 (Bytes) :" << capa << endl;
-    cout << "总请求数: " << cache.total_num << ", 命中次数: " << cache.hit_num << endl;
+    cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------DLIRS替换算法-------" << endl;
 }
