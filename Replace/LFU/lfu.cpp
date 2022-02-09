@@ -28,19 +28,15 @@ struct Node
 class LFUCache
 {
 private:
-    long long int capacity, hit_num, total_num;
-    long long int cache_size, minfreq;
+    long long int capacity, hit_num = 0, total_num = 0;
+    long long int cache_size = 0, minfreq = 0;
     unordered_map<long long int, list<Node>::iterator> key_table;
     unordered_map<long long int, list<Node>> freq_table;
     set<long long int> freq_set;
 
 public:
-    LFUCache(long long int _capacity)
+    LFUCache(long long int _capacity) : capacity(_capacity)
     {
-        cache_size = 0;
-        minfreq = 0;
-        hit_num = total_num = 0;
-        capacity = _capacity;
         key_table.clear();
         freq_table.clear();
         freq_set.clear();

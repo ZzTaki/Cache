@@ -31,9 +31,8 @@ private:
     long long int total_num = 0, hit_num = 0;
 
 public:
-    LRUCache(long long int capacity)
+    LRUCache(long long int _capacity) : capacity(_capacity)
     {
-        this->capacity = capacity;
         head = new DLinkedNode();
         tail = new DLinkedNode();
         head->next = tail, tail->prev = head;

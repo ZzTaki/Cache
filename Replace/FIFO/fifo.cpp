@@ -17,13 +17,11 @@ private:
     long long int capacity;
     unordered_map<long long int, long long int> cache; //id->size
     queue<long long int> ordered;                      //按加入缓存顺序将key排序
-    long long int cache_size, hit_num, total_num;
+    long long int cache_size = 0, hit_num = 0, total_num = 0;
 
 public:
-    FIFOCache(long long int capacity)
+    FIFOCache(long long int _capacity) : capacity(_capacity)
     {
-        cache_size = hit_num = total_num = 0;
-        this->capacity = capacity;
     }
 
     void visit(long long int key, long long int value)

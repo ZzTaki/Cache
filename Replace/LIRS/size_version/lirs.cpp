@@ -30,11 +30,11 @@ private:
     unordered_map<long long int, DLinkedNode *> q;
     unordered_map<long long int, int> key_state; // {id : x} (x = 0, 1, 2)  0代表LIR，1代表resident HIR, 2代表 non-resident HIR
     long long int capa_s, capa_q;
-    long long int size_s, size_q;
-    long long int total_num, hit_num;
+    long long int size_s = 0, size_q = 0;
+    long long int total_num = 0, hit_num = 0;
 
 public:
-    LIRSCache(long long int capacity, double rate = 9.0 / 10)
+    LIRSCache(long long int capacity, double rate = 9.0 / 10) : capa_s(capacity * rate), capa_q(capacity - capa_s)
     {
         head[0] = new DLinkedNode(), head[1] = new DLinkedNode();
         tail[0] = new DLinkedNode(), tail[1] = new DLinkedNode();
@@ -43,10 +43,6 @@ public:
         s.clear();
         q.clear();
         key_state.clear();
-        capa_s = capacity * rate;
-        capa_q = capacity - capa_s;
-        size_s = size_q = 0;
-        total_num = hit_num = 0;
     }
 
     ~LIRSCache()

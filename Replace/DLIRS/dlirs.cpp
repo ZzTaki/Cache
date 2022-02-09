@@ -30,15 +30,14 @@ private:
     unordered_map<long long int, DLinkedNode *> s;
     unordered_map<long long int, DLinkedNode *> q;
     unordered_map<long long int, int> key_state; // {id : x} (x = 0, 1, 2)  0代表LIR，1代表resident HIR, 2代表 non-resident HIR
-    long long int total_num, hit_num;
+    long long int total_num = 0, hit_num = 0;
 
-    long long int t_l, t_hr, size_l, size_hr, size_hn, size_hd; //期望LIR容量、期望resdent hir容量、当前LIR容量、当前resident hir容量、当前non-resident hir所占shadow cache容量、当前从LIR状态降级为resident hir的文件所占容量
+    long long int t_l, t_hr, size_l = 0, size_hr = 0, size_hn = 0, size_hd = 0; //期望LIR容量、期望resdent hir容量、当前LIR容量、当前resident hir容量、当前non-resident hir所占shadow cache容量、当前从LIR状态降级为resident hir的文件所占容量
     long long int capacity;
 
 public:
-    DLIRSCache(long long int capacity, double rate = 9.0 / 10)
+    DLIRSCache(long long int _capacity, double rate = 9.0 / 10) : capacity(_capacity), t_l(capacity * rate), t_hr(capacity - t_l)
     {
-        this->capacity = capacity;
         head[0] = new DLinkedNode(), head[1] = new DLinkedNode();
         tail[0] = new DLinkedNode(), tail[1] = new DLinkedNode();
         head[0]->next = tail[0], tail[0]->prev = head[0];
@@ -46,10 +45,6 @@ public:
         s.clear();
         q.clear();
         key_state.clear();
-        total_num = hit_num = 0;
-
-        t_l = rate * capacity, t_hr = capacity - t_l;
-        size_l = size_hr = size_hn = size_hd = 0;
     }
 
     ~DLIRSCache()

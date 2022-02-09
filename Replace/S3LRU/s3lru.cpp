@@ -19,21 +19,19 @@ struct DLinkedNode
     DLinkedNode() : key(0), value(0), prev(nullptr), next(nullptr) {}
     DLinkedNode(long long int _key, long long int _value) : key(_key), value(_value), prev(nullptr), next(nullptr) {}
 };
-class S4LRUCache
+class S3LRUCache
 {
 private:
     DLinkedNode *head[3];
     DLinkedNode *tail[3];
     long long int capacity;
     unordered_map<long long int, DLinkedNode *> cache_stack[3]; //id->{key, value, prev, next}
-    long long int cache_size[3], hit_num, total_num;
+    long long int cache_size[3], hit_num = 0, total_num = 0;
 
 public:
-    S4LRUCache(long long int capacity)
+    S3LRUCache(long long int _capacity) : capacity(_capacity)
     {
-        this->capacity = capacity;
         cache_size[0] = cache_size[1] = cache_size[2] = 0;
-        hit_num = total_num = 0;
         head[0] = new DLinkedNode(), head[1] = new DLinkedNode(), head[2] = new DLinkedNode();
         tail[0] = new DLinkedNode(), tail[1] = new DLinkedNode(), tail[2] = new DLinkedNode();
         head[0]->next = tail[0], tail[0]->prev = head[0];
@@ -41,7 +39,7 @@ public:
         head[2]->next = tail[2], tail[2]->prev = head[2];
     }
 
-    ~S4LRUCache()
+    ~S3LRUCache()
     {
         for (int i = 0; i <= 2; i++)
         {
@@ -196,7 +194,7 @@ int main()
     cin >> test;
 
     fstream fin_test(test);
-    S4LRUCache cache(capa);
+    S3LRUCache cache(capa);
 
     while (getline(fin_test, line))
     {

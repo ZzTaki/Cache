@@ -15,28 +15,25 @@
 #include <climits>
 using namespace std;
 
-class MINCache
+class MINCache //opt算法占用空间开销大，因此 key 和 value 只设置为 int 类型了
 {
 private:
-    long long int capacity, cache_size;
-    long long int total_num, hit_num;
-    unordered_map<long long int, long long int> cache;             //id->size
-    unordered_map<long long int, queue<long long int>> id_indexes; //id: 出现在哪些行
+    long long int capacity, cache_size = 0;
+    long long int total_num = 0, hit_num = 0;
+    unordered_map<int, int> cache;              //id->size
+    unordered_map<int, queue<int>> &id_indexes; //id: 出现在哪些行
 
 public:
-    MINCache(long long int _capacity, unordered_map<long long int, queue<long long int>> &_id_indexes)
+    MINCache(long long int _capacity, unordered_map<int, queue<int>> &_id_indexes) : capacity(_capacity), id_indexes(_id_indexes)
     {
-        capacity = _capacity;
-        cache_size = total_num = hit_num = 0;
         cache.clear();
-        id_indexes.clear();
-        id_indexes = _id_indexes;
     }
 
-    void visit(long long int key, long long int value)
+    void visit(int key, int value)
     {
-        id_indexes[key].pop();
         total_num++;
+        id_indexes[key].pop();
+
         if (cache.count(key))
         {
             hit_num++;
@@ -47,7 +44,7 @@ public:
                 return;
             while (cache_size + value > capacity)
             {
-                long long int evicted = searchMaxReuseId();
+                int evicted = searchMaxReuseId();
                 cache_size -= cache[evicted];
                 cache.erase(evicted);
             }
@@ -67,15 +64,16 @@ public:
     }
 
 private:
-    long long int searchMaxReuseId()
+    int searchMaxReuseId() const
     {
-        long long int max_line = -1, evicted = -1;
-        for (const pair<long long int, long long int> &block : cache) //选择前向重用距离最大的id
+        int max_line = -1, evicted = -1;
+        for (const pair<int, int> &block : cache) //选择前向重用距离最大的id
         {
-            long long int id = block.first;
-            if (id_indexes[id].front() > max_line)
+            int id = block.first;
+            const queue<int> &q = id_indexes.at(id);
+            if (q.front() > max_line)
             {
-                max_line = id_indexes[id].front();
+                max_line = q.front();
                 evicted = id;
             }
         }
@@ -89,9 +87,9 @@ void makeReusePos(string file_in, string file_out)
     ofstream fout(file_out);
     string line, temp;
     stringstream splitline;
-    unordered_map<long long int, vector<long long int>> reusePos;
+    unordered_map<int, vector<int>> reusePos;
     reusePos.clear();
-    long long int idx = 1;
+    int idx = 1;
     while (getline(fin, line)) //遍历每个文件出现的行索引，加入到id_indexes[key]中
     {
         vector<string> data;
@@ -101,18 +99,18 @@ void makeReusePos(string file_in, string file_out)
         {
             data.push_back(temp);
         }
-        long long int key = stoll(data[1]);
+        int key = stol(data[1]);
         if (!reusePos.count(key))
         {
-            reusePos[key] = vector<long long int>();
+            reusePos[key] = vector<int>();
         }
         reusePos[key].push_back(idx);
         idx++;
     }
-    for (const pair<long long int, vector<long long int>> &pr : reusePos) //将每个id出现的行位置输出到文件中
+    for (const pair<int, vector<int>> &pr : reusePos) //将每个id出现的行位置输出到文件中
     {
         fout << pr.first << " : ";
-        for (long long int pos : pr.second)
+        for (int pos : pr.second)
         {
             fout << pos << " ";
         }
@@ -143,7 +141,7 @@ int main()
     cout << "ReusePosition File Complete" << endl;
 
     fstream f_index(test + ".pos");
-    unordered_map<long long int, queue<long long int>> id_indexes;
+    unordered_map<int, queue<int>> id_indexes;
     id_indexes.clear();
     while (getline(f_index, line)) //遍历每个文件出现的行索引，加入到id_indexes[key]中
     {
@@ -154,14 +152,15 @@ int main()
         {
             data.push_back(temp);
         }
-        long long int key = stoll(data[0]);
-        id_indexes[key] = queue<long long int>();
+        int key = stol(data[0]);
+        id_indexes[key] = queue<int>();
         for (int i = 2; i < data.size(); i++)
         {
-            id_indexes[key].push(stoll(data[i]));
+            id_indexes[key].push(stol(data[i]));
         }
-        id_indexes[key].push(LLONG_MAX); //最后加一个无穷大
+        id_indexes[key].push(INT32_MAX); //最后加一个无穷大
     }
+    cout << id_indexes[32].size() << endl;
 
     fstream fin_test(test);
     MINCache cache(capa, id_indexes);
@@ -177,7 +176,7 @@ int main()
         }
 
         //检查是否有某个块比缓存容量还大
-        long long int key = stoll(data[1]), value = stoll(data[0]);
+        int key = stol(data[1]), value = stol(data[0]);
 
         cache.visit(key, value);
     }
