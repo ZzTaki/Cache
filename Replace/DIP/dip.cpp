@@ -51,10 +51,15 @@ public:
     {
         for (int i = 0; i < 3; i++)
         {
-            for (pair<int, DLinkedNode *> block : cache[i])
+            for (pair<const long long int, DLinkedNode *> &block : cache[i])
+            {
                 delete block.second;
+                block.second = nullptr;
+            }
             delete head[i];
+            head[i] = nullptr;
             delete tail[i];
+            tail[i] = nullptr;
         }
     }
 

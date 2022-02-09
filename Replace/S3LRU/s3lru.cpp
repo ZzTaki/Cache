@@ -43,10 +43,15 @@ public:
     {
         for (int i = 0; i <= 2; i++)
         {
-            for (pair<long long int, DLinkedNode *> block : cache_stack[i])
+            for (pair<const long long int, DLinkedNode *> &block : cache_stack[i])
+            {
                 delete block.second;
+                block.second = nullptr;
+            }
             delete head[i];
+            head[i] = nullptr;
             delete tail[i];
+            tail[i] = nullptr;
         }
     }
 
@@ -126,6 +131,7 @@ private:
             cache_size[2] -= removed->value;
             cache_stack[2].erase(removed->key);
             delete removed;
+            removed = nullptr;
         }
     }
 

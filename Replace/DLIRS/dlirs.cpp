@@ -49,18 +49,24 @@ public:
 
     ~DLIRSCache()
     {
-        for (const pair<long long int, DLinkedNode *> &p : s)
+        for (pair<const long long int, DLinkedNode *> &p : s)
         {
             delete p.second;
+            p.second = nullptr;
         }
-        for (const pair<long long int, DLinkedNode *> &p : q)
+        for (pair<const long long int, DLinkedNode *> &p : q)
         {
             delete p.second;
+            p.second = nullptr;
         }
         delete head[0];
+        head[0] = nullptr;
         delete head[1];
+        head[1] = nullptr;
         delete tail[0];
+        tail[0] = nullptr;
         delete tail[1];
+        tail[1] = nullptr;
     }
 
     void visit(long long int key, long long int value)
@@ -91,6 +97,7 @@ public:
                 q.erase(key);
                 removeNode(removed);
                 delete removed;
+                removed = nullptr;
 
                 bringCurrentBackToTarget();
             }
@@ -260,6 +267,7 @@ private:
             if (removed->flag)
                 size_hd -= removed->value;
             delete removed;
+            removed = nullptr;
         }
         return;
     }

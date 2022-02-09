@@ -40,10 +40,15 @@ public:
 
     ~LRUCache()
     {
-        for (pair<int, DLinkedNode *> block : cache)
+        for (pair<const long long int, DLinkedNode *> &block : cache)
+        {
             delete block.second;
+            block.second = nullptr;
+        }
         delete head;
+        head = nullptr;
         delete tail;
+        tail = nullptr;
     }
 
     //供外部调用
@@ -102,6 +107,7 @@ private:
             cache_size -= removed->value;
             cache.erase(removed->key);
             delete removed;
+            removed = nullptr;
         }
     }
 
