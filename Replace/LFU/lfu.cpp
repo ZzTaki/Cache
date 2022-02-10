@@ -162,4 +162,6 @@ int main()
     cout << "缓存容量 (Bytes) ：" << capa << endl;
     cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------LFU替换算法-------" << endl;
+
+    fin_test.close();
 }

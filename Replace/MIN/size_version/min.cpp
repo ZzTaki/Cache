@@ -42,15 +42,16 @@ public:
         {
             if (value > capacity)
                 return;
-            while (cache_size + value > capacity)
+            cache[key] = value;
+            cache_size += value;
+            while (cache_size > capacity)
             {
                 int evicted = searchMaxReuseId();
                 cache_size -= cache[evicted];
                 cache.erase(evicted);
             }
-            cache[key] = value;
-            cache_size += value;
         }
+        cout << total_num << endl;
     }
 
     long long int getTotal() const
@@ -84,7 +85,6 @@ private:
 void makeReusePos(string file_in, string file_out)
 {
     fstream fin(file_in);
-    ofstream fout(file_out);
     string line, temp;
     stringstream splitline;
     unordered_map<int, vector<int>> reusePos;
@@ -107,6 +107,8 @@ void makeReusePos(string file_in, string file_out)
         reusePos[key].push_back(idx);
         idx++;
     }
+    string tmp_file = file_out + ".tmp";
+    ofstream fout(tmp_file);
     for (const pair<int, vector<int>> &pr : reusePos) //将每个id出现的行位置输出到文件中
     {
         fout << pr.first << " : ";
@@ -118,6 +120,11 @@ void makeReusePos(string file_in, string file_out)
     }
     fin.close();
     fout.close();
+    if (rename(tmp_file.c_str(), file_out.c_str()))
+    {
+        cout << "Exception in renaming file from " << tmp_file << " to " << file_out << " code: " << strerror(errno) << endl;
+        exit(-1);
+    }
 }
 
 int main()
@@ -184,4 +191,7 @@ int main()
     cout << "缓存容量 (Bytes) ：" << capa << endl;
     cout << "总请求数: " << cache.getTotal() << ", 命中次数: " << cache.getHit() << endl;
     cout << "-------MIN替换算法-------" << endl;
+
+    f_index.close();
+    fin_test.close();
 }
