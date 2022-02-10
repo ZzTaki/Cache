@@ -23,7 +23,7 @@ private:
     long long int capacity, cache_size = 0;
     long long int total_num = 0, hit_num = 0;
     unordered_map<int, int> cache;               //id->size
-    multimap<int, int, greater<int>> nextPos_id; //id: 出现在哪些行
+    multimap<int, int, greater<int>> nextPos_id; //按cache中对象的前向重用距离从大到小进行排序
 
 public:
     MINCache(long long int _capacity) : capacity(_capacity)
@@ -84,7 +84,7 @@ void makeReusePos(string file_in, string file_out)
     idTrace.clear();
     int idx = 1;
 
-    while (getline(fin, line)) //遍历每个文件出现的行索引，加入到id_indexes[key]中
+    while (getline(fin, line)) //将每次请求的 id 按顺序保存在 idTrace 中
     {
         vector<string> data;
         splitline.clear();
@@ -101,8 +101,8 @@ void makeReusePos(string file_in, string file_out)
     unordered_map<int, int> id_lastPos;
     vector<int> next_pos(idTrace.size(), 0);
 
-    for (int i = idTrace.size(); i >= 0; i--)
-    {
+    for (int i = idTrace.size() - 1; i >= 0; i--) //id_lastPos记录 idTrace[i] 在 [i+1, idTrace.size()-1] 中第一次出现时的位置，如果没有则定为 INT32_MAX
+    {                                             //next_pos[i] 记录 idTrace[i] 下一次重用的位置，如果没有则定为 INT32_MAX
         int current_id = idTrace[i];
         auto lastIt = id_lastPos.find(current_id);
         if (lastIt != id_lastPos.end())
@@ -124,7 +124,7 @@ void makeReusePos(string file_in, string file_out)
     for (int i = 0; i < idTrace.size(); i++) //为trace添加附加信息：当前请求的id下次出现的位置
     {
         fin >> value >> key >> yewu;
-        fout << next_pos[i] << " " << value << " " << key << " " << yewu << endl; //next_pos id
+        fout << next_pos[i] << " " << value << " " << key << " " << yewu << endl; //next_pos value key yewu
     }
     fin.close();
     fout.close();
