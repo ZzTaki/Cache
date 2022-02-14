@@ -7,7 +7,7 @@
 - insertion：当 cache miss 时 insert 新块到数组的末尾。
 - eviction：当 insert 时如果 cache full，则从数组中随机选择若干块进行 evict，直到 cache 有足够空间容纳新块。
 - promotion：无。
-- 时间复杂度：
+- 时间复杂度：O(n)
 
 ### FIFO
 先进先出策略，模拟一个队列。
