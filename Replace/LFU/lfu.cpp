@@ -13,7 +13,7 @@
 #include <list>
 using namespace std;
 
-// 参考了 LeetCode 的官方题解，但有所不同的是，我实现的 LFU 算法是系统级的，而不是CPU片上级别
+// 参考了 LeetCode 的官方题解
 // 作者：LeetCode-Solution
 // 链接：https://leetcode-cn.com/problems/lfu-cache/solution/lfuhuan-cun-by-leetcode-solution/
 // 来源：力扣（LeetCode）
@@ -83,6 +83,7 @@ private:
     void Set(long long int key, long long int value)
     {
         // 缓存已满，需要进行删除操作
+        cout << "缓存中频率为1的文件数： " << freq_table[1].size() << ", 缓存中总文件数： " << key_table.size() << endl;
         while (cache_size + value > capacity)
         {
             // 通过 minfreq 拿到 freq_table[minfreq] 链表的末尾节点
