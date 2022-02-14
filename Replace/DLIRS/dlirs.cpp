@@ -157,7 +157,7 @@ public:
                     size_hr += value;
                     bringCurrentBackToTarget();
                 }
-                if (size_l + size_hr + size_hn > 2 * capacity)
+                if (size_l + size_hr + size_hn > 2 * capacity) //假设：非常驻冷数据索引对应文件的大小总和不能超过真实缓存的容量。
                 {
                     long long int count = 0; //统计删除的非常驻冷数据索引的大小总和
                     DLinkedNode *cur = tail[0]->prev;
