@@ -82,7 +82,8 @@ private:
         {
             int idx = my_rand(vec.size());
             long long int evict_key = vec[idx];
-            vec.erase(vec.begin() + idx);
+            swap(vec[idx], vec.back());
+            vec.pop_back();
             cache_size -= cache[evict_key];
             cache.erase(evict_key);
         }
