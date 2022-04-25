@@ -57,7 +57,7 @@ Low Inter-Reference Recency Set策略，模拟两条链表 s 和 q，s 中存储
 - eviction：当 q full时，evict q尾部的若干块。
 - promotion：当 hit 时，将新块从原位置删除，并提升到 s 的头部。
 - demotion：当 s full时，将 s 尾部的若干热数据块删除并添加到 q 的头部，并且保证最后的 s 尾部是热数据块。
-- idea：使用 recency 和 Inter-Reference（last reuse distance）作为预测前向重用距离的指标，q 中保存 |q| 个 recency 最小的冷数据，s 中保存 max(recency, Inter-Reference) 最小的 |s| 个热数据，并且 s 中还会保留 recency 小于 max(热数据recency) 的冷数据索引。
+- idea：使用 recency 和 Inter-Reference（last reuse distance）作为预测前向重用距离的指标，q 中保存 |q| 个 recency最小的冷数据或者从s中降冷的数据，s 中保存 |s| 个 recency 最小的热数据，并且 s 中还会保留 recency 小于 max(热数据recency) 的冷数据索引；当访问的是冷数据但是它的IRR小于s中recency最大的热数据，则将该冷数据置热，当s空间已满，则将recency最大的热数据降冷，加入q中。
 - 时间复杂度：O(n)
 
 ### DLIRS
