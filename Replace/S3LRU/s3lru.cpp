@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
@@ -21,11 +21,10 @@ struct DLinkedNode
 };
 class S3LRUCache
 {
-private:
     DLinkedNode *head[3];
     DLinkedNode *tail[3];
     long long int capacity;
-    unordered_map<long long int, DLinkedNode *> cache_stack[3]; //id->{key, value, prev, next}
+    unordered_map<long long int, DLinkedNode *> cache_stack[3]; // id->{key, value, prev, next}
     long long int cache_size[3], hit_num = 0, total_num = 0;
 
 public:
@@ -58,7 +57,7 @@ public:
     void visit(long long int key, long long int value)
     {
         total_num++;
-        if (get(key)) //get里面做了 premotion
+        if (get(key)) // get里面做了 premotion
         {
             hit_num++;
         }

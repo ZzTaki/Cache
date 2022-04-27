@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <vector>
-#include <string.h>
+#include <string>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -15,13 +15,13 @@
 #include <climits>
 using namespace std;
 
-class MINCache //opt算法占用空间开销大，因此 key 和 value 只设置为 int 类型了
+class MINCache // opt算法占用空间开销大，因此 key 和 value 只设置为 int 类型了
 {
 private:
     long long int capacity, cache_size = 0;
     long long int total_num = 0, hit_num = 0;
-    unordered_map<int, int> cache;              //id->size
-    unordered_map<int, queue<int>> &id_indexes; //id: 出现在哪些行
+    unordered_map<int, int> cache;              // id->size
+    unordered_map<int, queue<int>> &id_indexes; // id: 出现在哪些行
 
 public:
     MINCache(long long int _capacity, unordered_map<int, queue<int>> &_id_indexes) : capacity(_capacity), id_indexes(_id_indexes)

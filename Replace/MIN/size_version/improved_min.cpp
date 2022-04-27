@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <vector>
-#include <string.h>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -17,12 +17,11 @@
 #include <cassert>
 using namespace std;
 
-class MINCache //opt算法占用空间开销大，因此 key 和 value 只设置为 int 类型了
+class MINCache // opt算法占用空间开销大，因此 key 和 value 只设置为 int 类型了
 {
-private:
     long long int capacity, cache_size = 0;
     long long int total_num = 0, hit_num = 0;
-    unordered_map<int, int> cache;               //id->size
+    unordered_map<int, int> cache;               // id->size
     multimap<int, int, greater<int>> nextPos_id; //按cache中对象的前向重用距离从大到小进行排序
 
 public:
@@ -101,8 +100,8 @@ void makeReusePos(string file_in, string file_out)
     unordered_map<int, int> id_lastPos;
     vector<int> next_pos(idTrace.size(), 0);
 
-    for (int i = idTrace.size() - 1; i >= 0; i--) //id_lastPos记录 idTrace[i] 在 [i+1, idTrace.size()-1] 中第一次出现时的位置，如果没有则定为 INT32_MAX
-    {                                             //next_pos[i] 记录 idTrace[i] 下一次重用的位置，如果没有则定为 INT32_MAX
+    for (int i = idTrace.size() - 1; i >= 0; i--) // id_lastPos记录 idTrace[i] 在 [i+1, idTrace.size()-1] 中第一次出现时的位置，如果没有则定为 INT32_MAX
+    {                                             // next_pos[i] 记录 idTrace[i] 下一次重用的位置，如果没有则定为 INT32_MAX
         int current_id = idTrace[i];
         auto lastIt = id_lastPos.find(current_id);
         if (lastIt != id_lastPos.end())
@@ -124,7 +123,7 @@ void makeReusePos(string file_in, string file_out)
     for (int i = 0; i < idTrace.size(); i++) //为trace添加附加信息：当前请求的id下次出现的位置
     {
         fin >> value >> key >> yewu;
-        fout << next_pos[i] << " " << value << " " << key << " " << yewu << endl; //next_pos value key yewu
+        fout << next_pos[i] << " " << value << " " << key << " " << yewu << endl; // next_pos value key yewu
     }
     fin.close();
     fout.close();

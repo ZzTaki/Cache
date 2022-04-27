@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
@@ -9,7 +9,6 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
-#include <time.h>
 using namespace std;
 
 struct DLinkedNode
@@ -22,15 +21,14 @@ struct DLinkedNode
 };
 class LRU2Cache
 {
-private:
     DLinkedNode *head[2];
     DLinkedNode *tail[2];
     long long int capacity;
-    unordered_map<long long int, DLinkedNode *> cache;   //id->{id, value, prev, next}
+    unordered_map<long long int, DLinkedNode *> cache;   // id->{id, value, prev, next}
     unordered_map<long long int, DLinkedNode *> history; //
     long long int cache_size = 0, history_size = 0;
     long long int total_num = 0, hit_num = 0;
-    int para = 2; //history容量是 cache 容量的倍数
+    int para = 2; // history容量是 cache 容量的倍数
 
 public:
     LRU2Cache(long long int _capacity) : capacity(_capacity)
@@ -46,14 +44,11 @@ public:
         for (pair<const long long int, DLinkedNode *> &block : cache)
         {
             delete block.second;
-            block.second = nullptr;
         }
         for (int i = 0; i < 2; i++)
         {
             delete head[i];
-            head[i] = nullptr;
             delete tail[i];
-            tail[i] = nullptr;
         }
     }
 
@@ -64,7 +59,7 @@ public:
         if (get(key))
         {
             hit_num++;
-            moveToHead(cache[key], 0); //promotion
+            moveToHead(cache[key], 0); // promotion
         }
         else
         {
@@ -72,12 +67,12 @@ public:
             {
                 if (cache_size + value <= capacity)
                 {
-                    set(key, value, 0); //insertion
+                    set(key, value, 0); // insertion
                 }
                 else
                 {
-                    evict(key, value, 0); //evict
-                    set(key, value, 0);   //insertion
+                    evict(key, value, 0); // evict
+                    set(key, value, 0);   // insertion
                 }
             }
             else
@@ -108,7 +103,7 @@ public:
     }
 
 private:
-    //get只判断 lru 缓存中是否有对象，不做 promotion 操作
+    // get只判断 lru 缓存中是否有对象，不做 promotion 操作
     bool get(long long int key) const
     {
         return cache.count(key);

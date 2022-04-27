@@ -1,17 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <vector>
-#include <string.h>
+#include <ctime>
 #include <iostream>
-#include <sstream>
-#include <fstream>
-#include <algorithm>
 #include <unordered_map>
-#include <unordered_set>
-#include <set>
-#include <list>
-#include <assert.h>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <queue>
+#include <algorithm>
 using namespace std;
 
 struct DLinkedNode
@@ -23,10 +20,9 @@ struct DLinkedNode
     DLinkedNode() : key(0), value(0), flag(false), prev(nullptr), next(nullptr) {}
     DLinkedNode(long long int _key, long long int _value, bool _flag) : key(_key), value(_value), flag(_flag), prev(nullptr), next(nullptr) {}
 };
-class DLIRSCache //DLIRS使用和缓存容量相等的 shadow cache
+class DLIRSCache // DLIRS使用和缓存容量相等的 shadow cache
 {
-private:
-    DLinkedNode *head[2], *tail[2]; //0控制s，1控制q
+    DLinkedNode *head[2], *tail[2]; // 0控制s，1控制q
     unordered_map<long long int, DLinkedNode *> s;
     unordered_map<long long int, DLinkedNode *> q;
     unordered_map<long long int, int> key_state; // {id : x} (x = 0, 1, 2)  0代表LIR，1代表resident HIR, 2代表 non-resident HIR
@@ -52,21 +48,15 @@ public:
         for (pair<const long long int, DLinkedNode *> &p : s)
         {
             delete p.second;
-            p.second = nullptr;
         }
         for (pair<const long long int, DLinkedNode *> &p : q)
         {
             delete p.second;
-            p.second = nullptr;
         }
         delete head[0];
-        head[0] = nullptr;
         delete head[1];
-        head[1] = nullptr;
         delete tail[0];
-        tail[0] = nullptr;
         delete tail[1];
-        tail[1] = nullptr;
     }
 
     void visit(long long int key, long long int value)

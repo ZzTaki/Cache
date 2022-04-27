@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
@@ -15,9 +15,8 @@ using namespace std;
 
 class RandomCache
 {
-private:
     long long int capacity;
-    unordered_map<long long int, long long int> cache; //id->size
+    unordered_map<long long int, long long int> cache; // id->size
     vector<long long int> vec;                         //按加入缓存顺序将key排序
     long long int cache_size = 0, hit_num = 0, total_num = 0;
 
@@ -34,7 +33,7 @@ public:
         {
             hit_num++; // FIFO命中没有任何promotion
         }
-        else //miss
+        else // miss
         {
             if (cache_size + value <= capacity)
             {

@@ -1,16 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <vector>
-#include <string.h>
+#include <ctime>
 #include <iostream>
-#include <sstream>
-#include <fstream>
-#include <algorithm>
 #include <unordered_map>
-#include <unordered_set>
-#include <set>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <queue>
+#include <algorithm>
 #include <list>
+#include <set>
 using namespace std;
 
 // 参考了 LeetCode 的官方题解
@@ -27,7 +27,6 @@ struct Node
 };
 class LFUCache
 {
-private:
     long long int capacity, hit_num = 0, total_num = 0;
     long long int cache_size = 0, minfreq = 0;
     unordered_map<long long int, list<Node>::iterator> key_table;

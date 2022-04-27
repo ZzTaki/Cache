@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
@@ -9,7 +9,6 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
-#include <time.h>
 using namespace std;
 
 struct DLinkedNode
@@ -24,12 +23,11 @@ struct DLinkedNode
 //使用一个16位计数器来动态选择 LRU 和 BIP 策略
 class DIPCache
 {
-private:
     DLinkedNode *head[3];
     DLinkedNode *tail[3];
     long long int capacity[3];
-    unsigned short psel = 0;                              //police selector
-    unordered_map<long long int, DLinkedNode *> cache[3]; //id->{id, value, prev, next}，0为真实缓存，1为 lru shadow 缓存，2为 bip shadow 缓存
+    unsigned short psel = 0;                              // police selector
+    unordered_map<long long int, DLinkedNode *> cache[3]; // id->{id, value, prev, next}，0为真实缓存，1为 lru shadow 缓存，2为 bip shadow 缓存
     long long int cache_size[3];
     long long int total_num = 0, hit_num = 0;
     bool flag = false; //标记是否预热结束
@@ -54,12 +52,9 @@ public:
             for (pair<const long long int, DLinkedNode *> &block : cache[i])
             {
                 delete block.second;
-                block.second = nullptr;
             }
             delete head[i];
-            head[i] = nullptr;
             delete tail[i];
-            tail[i] = nullptr;
         }
     }
 
@@ -73,32 +68,32 @@ public:
             {
                 if (i == 0)
                     hit_num++;
-                moveToHead(cache[i][key], i); //promotion
+                moveToHead(cache[i][key], i); // promotion
             }
             else
             {
                 if (flag)
                 {
-                    if (i == 1) //LRU miss则计数器+1
+                    if (i == 1) // LRU miss则计数器+1
                     {
                         psel = (unsigned short)min(UINT16_MAX, psel + 1);
                     }
-                    else if (i == 2) //BIP miss则计数器-1
+                    else if (i == 2) // BIP miss则计数器-1
                     {
                         psel = (unsigned short)max(0, psel - 1);
                     }
                 }
                 if (cache_size[i] + value <= capacity[i])
                 {
-                    set(key, value, i); //insertion
+                    set(key, value, i); // insertion
                 }
                 else //能够发生淘汰就代表预热结束了
                 {
                     if (value > capacity[i])
                         return;
                     flag = true;
-                    evict(key, value, i); //evict
-                    set(key, value, i);   //insertion
+                    evict(key, value, i); // evict
+                    set(key, value, i);   // insertion
                 }
             }
         }
@@ -115,7 +110,7 @@ public:
     }
 
 private:
-    //get只判断缓存中是否有对象，不做 promotion 操作
+    // get只判断缓存中是否有对象，不做 promotion 操作
     bool get(long long int key, int idx) const
     {
         return cache[idx].count(key);

@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
@@ -9,7 +9,6 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
-#include <time.h>
 using namespace std;
 
 struct DLinkedNode
@@ -22,11 +21,10 @@ struct DLinkedNode
 };
 class LRUCache
 {
-private:
     DLinkedNode *head;
     DLinkedNode *tail;
     long long int capacity;
-    unordered_map<long long int, DLinkedNode *> cache; //id->{id, value, prev, next}
+    unordered_map<long long int, DLinkedNode *> cache; // id->{id, value, prev, next}
     long long int cache_size = 0;
     long long int total_num = 0, hit_num = 0;
 
@@ -58,20 +56,20 @@ public:
         if (get(key))
         {
             hit_num++;
-            moveToHead(cache[key]); //promotion
+            moveToHead(cache[key]); // promotion
         }
         else
         {
             if (cache_size + value <= capacity)
             {
-                set(key, value); //insertion
+                set(key, value); // insertion
             }
             else
             {
                 if (value > capacity)
                     return;
-                evict(key, value); //evict
-                set(key, value);   //insertion
+                evict(key, value); // evict
+                set(key, value);   // insertion
             }
         }
     }
@@ -87,7 +85,7 @@ public:
     }
 
 private:
-    //get只判断 lru 缓存中是否有对象，不做 promotion 操作
+    // get只判断 lru 缓存中是否有对象，不做 promotion 操作
     bool get(long long int key) const
     {
         return cache.count(key);
