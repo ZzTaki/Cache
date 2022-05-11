@@ -287,6 +287,41 @@ vector<int> greedyPart(vector<vector<long long int>> &cnts)
     }
     return allocations;
 }
+vector<int> lookaheadPart(vector<vector<long long int>> &cnts)
+{
+    for (int i = 0; i < YEWU_NUM; i++)
+    {
+        for (int j = 1; j < MAX_NUM; j++)
+        {
+            cnts[i][j] += cnts[i][j - 1];
+        }
+    }
+    vector<int> allocations(YEWU_NUM); //已分配给各业务的ways数量
+    int balance = MAX_NUM - YEWU_NUM;  //剩余待分配的ways数量
+    for (int i = 0; i < YEWU_NUM; i++)
+    {
+        allocations[i] = 1;
+    }
+    while (balance)
+    {
+        int winner = -1;
+        long long int max_change = -1;
+        for (int i = 0; i < YEWU_NUM; i++)
+        {
+            for (int j = allocations[i] + 1; j <= allocations[i] + balance; j++)
+            {
+                if ((double)(cnts[i][j] - cnts[i][allocations[i]]) / (j - allocations[i]) > max_change)
+                {
+                    winner = i;
+                    max_change = j - allocations[i];
+                }
+            }
+        }
+        allocations[winner] += max_change;
+        balance -= max_change;
+    }
+    return allocations;
+}
 int main()
 {
     for (MAX_NUM = 32; MAX_NUM <= 2048 * 8; MAX_NUM *= 2)
@@ -295,7 +330,7 @@ int main()
         {
             ofstream fout;
             const long long int GB = 1024 * 1024 * 1024;
-            long long int capa = (long long int)2.2 * 1024 * GB * 0.01;
+            long long int capa = (long long int)2 * 1024 * GB * 0.01;
 
             // int update_nums = 0;
             // long double total_update_times = 0.0;
@@ -314,7 +349,7 @@ int main()
             }
 
             clock_t start = clock();
-            ifstream fin("/data/home/tencent/partition/bj/118_yewu/warm.txt");
+            ifstream fin("./warm.txt");
             while (true)
             {
                 string key;
@@ -353,7 +388,7 @@ int main()
             fin.close();
             interval_miss = 0;
 
-            fin.open("/data/home/tencent/partition/bj/118_yewu/test.txt");
+            fin.open("./test.txt");
             while (true)
             {
                 string key;
