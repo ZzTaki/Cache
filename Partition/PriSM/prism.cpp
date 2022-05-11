@@ -336,8 +336,8 @@ int main()
         for (double rate : rates)
         {
             PriSM cache(wss * rate);
-            fstream fin_warm("/data/home/tencent/partition/bj/118_yewu/warm.txt");
-            fstream fin_test("/data/home/tencent/partition/bj/118_yewu/test.txt");
+            fstream fin_warm("./warm.txt");
+            fstream fin_test("./test.txt");
 
             long long int total_num = 0, total_miss = 0;
             while (getline(fin_warm, line)) //预热
